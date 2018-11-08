@@ -1,0 +1,10 @@
+If a workspace in your tenant has an {1}Attachments{2} tab, you can use the tab to upload and attach files to any item in the workspace.
+What is the Attachments container above Attachments & Details used for?
+You can still attach PDFs that exceed this limit. 
+There's an option in Your Profile to turn display of thumbnails on and off. 
+For example, let's assume a Specification Change Order in a workspace is related to a Procedure Change Order in another workspace. 
+Your Administrator can change the name of the {1}Attachments{2} tab to something more meaningful within the context of your PLM solution. 
+Go to Your Profile and make sure that the option is turned on (see {1}).
+{1}PLM 360{2} cannot generate thumbnails for PDF files that are larger than 248 KB. 
+I've uploaded a PDF file to the Attachments tab but I don't see a thumbnail image.
+Feature Friday: Name Dropping with PLM 360

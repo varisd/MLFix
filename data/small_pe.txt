@@ -1,0 +1,10 @@
+Pokud pracovní prostor ve vašem klientovi obsahuje kartu {1}Přílohy{2}, můžete ji použít k odeslání a připojení souborů k libovolné položce v pracovním prostoru.
+K čemu slouží kontejner Přílohy nad položkou Přílohy a podrobnosti?
+Soubory PDF překračující toto omezení však můžete připojit jako přílohu. 
+Ve vašem profilu existuje možnost zapnutí/vypnutí zobrazení miniatur. 
+Například předpokládejme, že změnový příkaz specifikace v pracovním prostoru souvisí se změnovým příkazem procedury v jiném pracovním prostoru. 
+Správce může změnit název karty {1}Přílohy{2}, aby dával v kontextu vašeho řešení PLM větší smysl. 
+Přejděte do svého profilu a zkontrolujte, zda je možnost zapnuta (viz část {1}).
+Aplikace {1}PLM 360{2} nemůže generovat miniatury pro soubory PDF, které jsou větší než 248 kB. 
+Po odeslání souboru PDF na kartu Přílohy nevidím miniaturu.
+Nová funkce: Přetahování příloh v aplikaci PLM 360

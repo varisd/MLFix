@@ -163,7 +163,7 @@ class Model:
         elif (f_select == "rlregr"):
             self.selector = eval("RandomizedLogisticRegression(" + f_select_params + ")")
         elif (f_select == "svm"):
-            print "SelectFromModel(LinearSVC(" + f_select_params + "))"
+            print("SelectFromModel(LinearSVC(" + f_select_params + "))")
             self.selector = eval("SelectFromModel(LinearSVC(" + f_select_params + "))")
         elif (f_select == "extra_trees"):
             self.selector = eval("SelectFromModel(ExtraTreesClassifier(" + f_select_params + "))")

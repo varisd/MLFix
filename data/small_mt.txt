@@ -1,0 +1,10 @@
+Pokud pracovní prostor v nájemce má {1}Přílohy{2}, můžete použít k načtení a připojit soubory na libovolnou položku v pracovním prostoru.
+Co je to přílohy kontejner nad přílohy a detaily používá?
+Stále můžete připojit soubory PDF, které toto omezení překračují.
+Existuje možnost do vašeho profilu můžete zapnout a vypnout zobrazení miniatur.
+Například předpokládejme, že specifikaci změnového příkazu v pracovním prostoru se vztahuje k pracovní postup změnového příkazu na jiný pracovní prostor.
+Správce může změnit název {1}Přílohy{2}, chcete-li něco více praktickými v kontextu PLM řešení.
+Přejít do vašeho profilu a ujistěte se, že je zapnuta možnost (viz {1}).
+{1}PLM 360{2} nelze generovat miniatury pro soubory PDF, které jsou větší než 248-428 kB.
+i jste odeslali soubor PDF do karty Přílohy, ale nevidím obrázku náhledu.
+Prvek Pátek: Název rušení s PLM 360

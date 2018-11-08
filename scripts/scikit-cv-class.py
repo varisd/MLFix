@@ -5,6 +5,7 @@ import os, sys, argparse
 import datetime
 import gzip
 import model
+import neural
 import scorer
 import numpy as np
 from sklearn.feature_extraction import DictVectorizer
@@ -43,7 +44,7 @@ def chunks (l, n):
 def downsample(X, Y, n):
     X1 = []
     Y1 = []
-    print len(X)
+    print(len(X))
     data = zip(X,Y)
     i = 0
     for inst in data:
@@ -51,7 +52,7 @@ def downsample(X, Y, n):
             X1.append(inst[0])
             Y1.append(inst[1])
         i = (i + 1) % n
-    print len(X1)
+    print(len(X1))
     return X1,Y1
 
 def ignored_field (feature_name):
@@ -60,6 +61,15 @@ def ignored_field (feature_name):
         if regex in feature_name:
             ignored = True
     return ignored 
+
+def targets2numpy (input_dict, targets):
+    target_arr = []
+    for line in input_dict:
+        arr = []
+        for t in targets:
+            arr.append(line[t])
+        target_arr.append(arr)
+    return np.array(target_arr)
 
 def line2dict (feat_names, feat_vals, ignore_blank):
     """ Create dictionary from the input line."""
@@ -75,7 +85,7 @@ def line2dict (feat_names, feat_vals, ignore_blank):
 def split_targets_feats (input_dict, targets):
     target_dict = dict()
     feat_dict = dict()
-    for key,item in input_dict.iteritems():
+    for key,item in input_dict.items():
         if key in targets:
             target_dict[key] = item
         elif ignored_field(key) != True:
@@ -101,9 +111,9 @@ def evaluate (model, true, base, pred, targets):
         p1 = pred[i]
         b1 = base[i]
         t1 = true[i]
-        base_str = ";".join([b1[x] for x in targets])
-        pred_str = ";".join([p1[x] for x in targets])
-        true_str = ";".join([t1[x] for x in targets])
+        base_str = ";".join([b1[x] for x,_ in enumerate(targets)])
+        pred_str = ";".join([p1[x] for x,_ in enumerate(targets)])
+        true_str = ";".join([t1[x] for x,_ in enumerate(targets)])
 
         if pred_str == true_str:
             g = g + 1
@@ -154,7 +164,7 @@ parser.add_argument('--save_model', metavar='model_save_destination', nargs='?',
 parser.add_argument('--load_model', metavar='model_location', nargs='?', type=str)
 args = parser.parse_args()
 
-fh = gzip.open(args.input_file, 'rb', 'UTF-8')
+fh = gzip.open(args.input_file, 'rt', 'UTF-8')
 line = fh.readline().rstrip("\n")
 feature_names =  line.split("\t")
 targets = args.target.split('|')
@@ -185,7 +195,7 @@ while True:
 
     line_dict = line2dict(feature_names, feat_values, False)  
     tdict, fdict = split_targets_feats(line_dict, targets)
-    for key,item in fdict.iteritems():
+    for key,item in fdict.items():
         registered_feat_names[key] = 1
 
     data_X.append(fdict)
@@ -195,7 +205,7 @@ fh.close()
 
 sys.stderr.write("# of initial features: %d\n" % (len(registered_feat_names)))
 
-fh = gzip.open(args.base_file, 'rb', 'UTF-8')
+fh = gzip.open(args.base_file, 'rt', 'UTF-8')
 line = fh.readline().rstrip("\n")
 
 baseline = []
@@ -208,12 +218,6 @@ while True:
     line_dict = line2base(targets, values)
     baseline.append(line_dict)
 
-predicted = baseline
-tr_pred = baseline
-baseline = np.array(baseline)
-predicted = np.array(predicted)
-tr_pred = np.array(tr_pred)
-
 fh.close()
 
 # Load model, predict targets and exit
@@ -222,15 +226,24 @@ if args.load_model != None:
     m = model.loadModel(args.load_model)
     res = m.predict(data_X)
     for r in res:
-        print r
+        print(r)
     sys.exit()
 
 data_X = np.array(data_X)
-data_Y = np.array(data_Y)
 
 # Model cross validation
-m = model.Model(model_type, args.model_params, f_select, args.feat_selector_params, sparse=sparse)
+if model_type in ["FeedForward", "Highway"]:
+    baseline = targets2numpy(baseline, targets)
+    data_Y = targets2numpy(data_Y, targets)
+    m = eval("neural.FeedForwardNetwork({}, layer_type='{}')".format(args.model_params, model_type))
+else:
+    baseline = np.array(baseline)
+    data_Y = np.array(data_Y)
+    m = model.Model(model_type, args.model_params, f_select, args.feat_selector_params, sparse=sparse)
 pred = data_Y
+
+predicted = np.reshape(baseline, [-1])
+tr_pred = np.reshape(baseline, [-1])
 
 sys.stderr.write("Starting crossvalidation\n")
 #cv = cross_validation.StratifiedKFold(data_X, n_folds=10, shuffle=True, random_state=seed)
@@ -239,7 +252,7 @@ sys.stderr.write("Starting crossvalidation\n")
 
 global_encoder = LabelEncoder()
 global_encoder.fit(np.concatenate((data_Y,baseline)))
-print "10-fold cross validation (baseline): %s" % accuracy_score(global_encoder.transform(data_Y), global_encoder.transform(baseline))
+print("10-fold cross validation (baseline): {}".format(accuracy_score(global_encoder.transform(data_Y), global_encoder.transform(baseline))))
 #scores = cross_validation.cross_val_score(model.Model("baseline", "strategy='most_frequent',random_state=%d" % seed), data_X, data_Y, cv=cv)
 #print "10-fold cross validation (most_frequent): %s" % scores.mean()
 #scores = cross_validation.cross_val_score(model.Model("baseline", "strategy='uniform',random_state=%d" % seed), data_X, data_Y, cv=cv)
@@ -262,23 +275,24 @@ sys.stderr.write("Starting 10-fold leave-one-out crossvalidation\n")
 count = 1
 n_chunks = (len(data_X) // 10) // 2000 + 1
 #n_chunks = len(data_X) // 10 + 1
-print n_chunks
+print(n_chunks)
 #kf = KFold(len(data_X), n_folds=10)
 kf = KFold(10)
 #skf = StratifiedKFold(y=global_encoder.transform(data_Y), n_folds=10)
 #for train_index, test_index in kf:
 for k, (train_index, test_index) in enumerate(kf.split(data_X, data_Y)):
-#for k, (train_index, test_index) in enumerate(skf):
     sys.stderr.write("KFold iteration: %d\n" % (count))
-    X_train = data_X[train_index]
+    X_train, X_test = data_X[train_index], data_X[test_index]
     Y_train, Y_test, base = data_Y[train_index], data_Y[test_index], baseline[test_index]
-#    X_train, Y_train = downsample(X_train, Y_train, 1)
+    if model_type in ["FeedForward", "Highway"]:
+        m = eval("neural.FeedForwardNetwork({}, layer_type='{}')".format(args.model_params, model_type))
+    else:
+        m = model.Model(model_type, args.model_params, f_select, args.feat_selector_params, sparse=sparse)
     m.fit(X_train, Y_train)
-    chunk_size = len(test_index) // n_chunks
-    for ch in np.array(list(chunks(test_index, chunk_size))):
-        sys.stderr.write(str(datetime.datetime.now().time()) + ": started predicting (predict))\n")
-        predicted[ch] = m.predict(data_X[ch])
-        sys.stderr.write(str(datetime.datetime.now().time()) + ": stopped predicting (predict))\n")
+    
+    sys.stderr.write(str(datetime.datetime.now().time()) + ": started predicting (predict))\n")
+    predicted[test_index] = m.predict(X_test)
+    sys.stderr.write(str(datetime.datetime.now().time()) + ": stopped predicting (predict))\n")
 #    for inst in test_index.tolist():
 #        sys.stderr.write(str(datetime.datetime.now().time()) + ": started predicting (predict))\n")
 #        print len(data_X[inst])
@@ -287,15 +301,19 @@ for k, (train_index, test_index) in enumerate(kf.split(data_X, data_Y)):
     evaluate(m, Y_test, base, predicted[test_index], targets)
     count = count + 1
 
-print "Training set Evaluation:"
+print("Training set Evaluation:")
+if model_type in ["FeedForward", "Highway"]:
+    m = eval("neural.FeedForwardNetwork({}, layer_type='{}')".format(args.model_params, model_type))
+else:
+    m = model.Model(model_type, args.model_params, f_select, args.feat_selector_params, sparse=sparse)
 m.fit(data_X, data_Y)
-for ch in np.array(list(chunks(range(0, len(data_X), 1), 2000))):
-    sys.stderr.write(str(datetime.datetime.now().time()) + ": started predicting (predict))\n")
-    tr_pred[ch] = m.predict(data_X[ch])
-    sys.stderr.write(str(datetime.datetime.now().time()) + ": stopped predicting (predict))\n")
+
+sys.stderr.write(str(datetime.datetime.now().time()) + ": started predicting (predict))\n")
+tr_pred = m.predict(data_X)
+sys.stderr.write(str(datetime.datetime.now().time()) + ": stopped predicting (predict))\n")
 evaluate(m, data_Y, baseline, tr_pred, targets)
 
-print "Final Evaluation:"
+print("Final Evaluation:")
 evaluate(m, data_Y, baseline, predicted, targets)
 
 # Train model and save it

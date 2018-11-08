@@ -19,13 +19,14 @@ dir=$1
 
 model=$2
 base_params=$3
-#m_params="max_features=0.45,n_estimators=50"
-m_params="kernel=\"sigmoid\",C=1000"
+m_params=""
+#m_params="kernel=\"sigmoid\",C=1000"
 
 # seq command generating all the parameter values
 param_val_generator=$4
 selector=""
-selector=$5
+#selector=$5
+s_params="percentile=0.7"
 
 #targets="new_node_number new_node_case"
 #targets="new_node_gender new_node_number new_node_case"
@@ -34,7 +35,7 @@ targets="wrong_form_3"
 #targets="new_node_case"
 #targets="new_node_pos new_node_prontype new_node_numtype new_node_numform new_node_numvalue new_node_adpostype new_node_conjtype new_node_poss new_node_reflex new_node_abbr new_node_hyph new_node_negativeness new_node_gender new_node_animateness new_node_number new_node_case new_node_prepcase new_node_degree new_node_person new_node_possgender new_node_possnumber new_node_verbform new_node_mood new_node_tense new_node_voice new_node_aspect new_node_variant new_node_style new_node_tagset new_node_other"
 
-target_dir="tuning/wrong_form_3.srclemma.sel"
+target_dir="tuning/wrong_form_3.neural"
 #target_dir="tuning/new_node_case.selector"
 #target_dir="tuning/case_number"
 #target_dir="tuning/case.srclemma"
@@ -67,8 +68,9 @@ for val in $values; do
     targets_str=$(echo "$targets" | tr ' ' '|')
     name="mlfix_tuning_${model}_${selector}"
     echo "predicting: $targets" > "${target_dir}/${dir}/${model_name}.results"
-    #~bojar/tools/shell/qsubmit --mem=15g --priority="-200" --queue=$queue --jobname=${name} "scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --target='$targets_str' --model_type=$model --model_params='${base_params}${val}' | tee -a ${target_dir}/${dir}/${model_name}.results"
-    ~bojar/tools/shell/qsubmit --mem=10g --priority="-200" --queue=$queue --jobname=${name} "scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --feat_selector_params='${base_params}${val}' --target='$targets_str' --model_type=$model --model_params='${m_params}' | tee -a ${target_dir}/${dir}/${model_name}.results"
+    ~bojar/tools/shell/qsubmit --mem=15g --priority="-200" --queue=$queue --jobname=${name} ". ~helcl/virtualenv/tensorflow-1.0-cpu/bin/activate && scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector='' --feat_selector_params='' --target='$targets_str' --model_type=$model --model_params='${base_params}${val}' | tee -a ${target_dir}/${dir}/${model_name}.results"
+    #~bojar/tools/shell/qsubmit --mem=15g --priority="-200" --queue=$queue --jobname=${name} "source activate py2.7 && scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --feat_selector_params='${s_params}' --target='$targets_str' --model_type=$model --model_params='${base_params}${val}' | tee -a ${target_dir}/${dir}/${model_name}.results"
+    #~bojar/tools/shell/qsubmit --mem=10g --priority="-200" --queue=$queue --jobname=${name} "scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --feat_selector_params='${base_params}${val}' --target='$targets_str' --model_type=$model --model_params='${m_params}' | tee -a ${target_dir}/${dir}/${model_name}.results"
     #~bojar/tools/shell/qsubmit --mem=15g --priority="-200" --queue=$queue --jobname=${name} "scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --target='$targets_str' --model_type=$model --model_params='${base_params},class_weight={ 1: ${val}}' | tee -a ${target_dir}/${dir}/${model_name}.results"
 done
 

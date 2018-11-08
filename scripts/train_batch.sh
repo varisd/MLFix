@@ -33,7 +33,8 @@ target_dir="models/$dir"
 #model_name="best.cn.pkl"
 #model_name="best.cng.pkl"
 #model_name="best.cnga.pkl"
-model_name=best.wrong_form.pkl
+#model_name=best.wrong_form.pkl
+#
 
 
 #input_file=${dir}/all_edits.tsv.gz
@@ -59,4 +60,4 @@ queue=`lowestQueue`
 targets_str=$(echo "$targets" | tr ' ' '|')
 jobName="mlfix_train_${model_name}_${model}_${selector}"
 
-~bojar/tools/shell/qsubmit --mem=15g --priority="-100" --queue=$queue --jobname=${jobName} "scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --feat_selector_params='${sel_params}' --target='$targets_str' --model_type=$model --model_params='${m_params}' --save_model=${target_dir}/${model_name} | tee -a ${target_dir}/${jobName}.out"
+~bojar/tools/shell/qsubmit --mem=15g --priority="-100" --queue=$queue --jobname=${jobName} "source activate py2.7 && scripts/scikit-cv-class.py --input_file=$input_file --base_file=$base_file --feat_selector=$selector --feat_selector_params='${sel_params}' --target='$targets_str' --model_type=$model --model_params='${m_params}' --save_model=${target_dir}/${model_name} | tee -a ${target_dir}/${jobName}.out"
