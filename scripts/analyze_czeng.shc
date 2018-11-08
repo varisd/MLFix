@@ -1,0 +1,20 @@
+#!/bin/bash
+renice 10 $$
+
+dir=`mktemp -d --tmpdir=/a/LRC_TMP/varis/mlfix/jobs`
+
+T="treex -p --survive --jobs=100 --mem=15G --workdir=$dir --name=collect_edits"
+
+$T scenarios/cs_analysis_1_morphodita.scen \
+scenarios/analyze_ref.scen \
+scenarios/parse_ref.scen \
+scenarios/align_ref.scen \
+scenarios/en_analysis_1.scen \
+scenarios/en_analysis_2.scen \
+scenarios/run_mgiza_cs2en.scen \
+Write::Treex substitute={2015-12-06_15-31-14_2739225705_collect_autodesk}{2015-12-06_15-31-14_2739225705_collect_autodesk_processed} \
+Depfix::CollectEdits language=cs selector=  to=. \
+-- 2015-12-06_15-31-14_2739225705_collect_autodesk/translation*.treex.gz
+
+#Depfix::CollectEdits language=cs selector=  to=. config_file=~/treex/treex/devel/depfix/mlf/config/all_fields_noparentref.yaml \
+

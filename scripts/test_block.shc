@@ -1,0 +1,29 @@
+#!/bin/bash
+# prepare the training data for feature extraction
+# run "make init totreex" prior to this script
+renice 10 $$
+
+INPUT_DIR=$1
+OUTPUT_DIR=$2
+
+[[ -d "/a/LRC_TMP/varis/mlfix/collect_edits/jobs" ]] || mkdir -p /a/LRC_TMP/varis/mlfix/collect_edits/jobs
+[[ -d $OUTPUT_DIR ]] || mkdir -p $OUTPUT_DIR
+
+dir=`mktemp -d --tmpdir=/a/LRC_TMP/varis/mlfix/collect_edits/jobs`
+
+#T="treex -p --survive --jobs=100 --mem=15G --workdir=$dir --name=collect_edits"
+T="treex"
+
+# TODO: parse reference -> align -> get mt dependency tree
+#scenarios/cs_ref_analysis_2.scen
+$T -s \
+Scen::MLFix::Fix method=oracle language=cs selector= config_file=/net/me/merkur3/varis/workdir-git/mlfix/config/models/knn_3_combined.yaml iset_driver="cs::pdt" \
+-- $INPUT_DIR/translation001.treex.gz
+$T \
+Util::SetGlobal language=cs selector= source_language=en \
+scenarios/write_sentences.scen \
+-- $OUTPUT_DIR/translation001.treex.gz \
+
+#$T Align::ReverseAlignment language=cs A2A::ProjectTreeThroughAlignment language=en to_language=cs to_selector= \
+#Write::Treex substitute={$INPUT_DIR}{$OUTPUT_DIR} \
+#-- $INPUT_DIR/translation*.treex.gz

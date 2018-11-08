@@ -1,0 +1,33 @@
+#!/bin/bash
+# generate list of all "possibly extractable" features
+
+prefixes="old new src parentold parentsrc, parentnew"
+#prefixes="src parentsrc"
+nodes="node parent precchild follchild precsibling follsibling"
+attributes="form lemma tag afun edgedirection childno lchildno rchildno pos nountype nametype adjtype prontype numtype numform numvalue verbtype advtype adpostype conjtype parttype punctype puncside synpos morphpos poss reflex foreign abbr hyph typo echo negativeness definiteness gender animateness number case prepcase degree person politeness possgender possperson possnumber possednumber absperson ergperson datperson absnumber ergnumber datnumber abspoliteness ergpoliteness datpoliteness erggender datgender position subcat verbform mood tense voice aspect variant style tagset other"
+attr_agr="pos-agr nountype-agr nametype-agr adjtype-agr prontype-agr numtype-agr numform-agr numvalue-agr verbtype-agr advtype-agr adpostype-agr conjtype-agr parttype-agr punctype-agr puncside-agr synpos-agr morphpos-agr poss-agr reflex-agr foreign-agr abbr-agr hyph-agr typo-agr echo-agr negativeness-agr definiteness-agr gender-agr animateness-agr number-agr case-agr prepcase-agr degree-agr person-agr politeness-agr possgender-agr possperson-agr possnumber-agr possednumber-agr absperson-agr ergperson-agr datperson-agr absnumber-agr ergnumber-agr datnumber-agr abspoliteness-agr ergpoliteness-agr datpoliteness-agr erggender-agr datgender-agr position-agr subcat-agr verbform-agr mood-agr tense-agr voice-agr aspect-agr variant-agr style-agr"
+
+echo "old_node_id"
+
+for prefix in $prefixes; do
+	for node in $nodes; do
+		if [[ $prefix == "old" || $prefix == "new" || $prefix == "src" ]]; then
+#			if [[ $node != "node" ]]; then
+#				continue
+#			fi
+           if [[ $node == "parent" ]]; then
+               continue
+           fi
+
+		fi
+		for attr in $attributes; do
+			echo "${prefix}_${node}_${attr}";
+		done
+        for attr in $attr_agr; do
+            echo "${prefix}_${node}_${attr}";
+        done
+	done
+done
+
+echo "wrong_form_1"
+echo "wrong_form_2"

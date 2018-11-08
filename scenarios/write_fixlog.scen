@@ -1,0 +1,2 @@
+Util::SetGlobal language=cs selector=FIXLOG if_missing_zone=create
+Write::Sentences

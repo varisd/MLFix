@@ -1,0 +1,5 @@
+Util::SetGlobal language=cs
+Util::Eval zone='$zone->remove_tree("a") if $zone->has_tree("a");'
+W2A::CS::Tokenize
+W2A::CS::TagMorphoDiTa lemmatize=1
+A2A::ConvertTags input_driver="cs::pdt"

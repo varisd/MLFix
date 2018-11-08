@@ -1,0 +1,35 @@
+#!/bin/bash
+# prepare the training data for feature extraction
+# run "make init totreex" prior to this script
+renice 10 $$
+
+INPUT_DIR=$1
+OUTPUT_DIR=$2
+
+[[ -d "/a/LRC_TMP/varis/mlfix/collect_edits/jobs" ]] || mkdir -p /a/LRC_TMP/varis/mlfix/collect_edits/jobs
+[[ -d $OUTPUT_DIR ]] || mkdir -p $OUTPUT_DIR
+
+dir=`mktemp -d --tmpdir=/a/LRC_TMP/varis/mlfix/collect_edits/jobs`
+
+T="treex -p --survive --jobs=100 --mem=15G --workdir=$dir --name=collect_edits"
+#T="treex -p --survive --jobs=1 --mem=15G --workdir=$dir --name=collect_edits"
+
+$T Scen::MLFix::Analysis_1 language=cs iset_driver="cs::pdt" \
+Scen::MLFix::Analysis_1 language=cs selector=ref iset_driver="cs::pdt" \
+Scen::MLFix::Analysis_1 language=en iset_driver="en::penn" \
+Align::A::MonolingualGreedy selector= language=cs to_selector=ref \
+Scen::MLFix::RunMGiza from_language=cs to_language=en model=cs-en \
+Scen::MLFix::Analysis_2 language=en parser=mst \
+Scen::MLFix::Analysis_2 language=cs src_language=en \
+Write::Treex substitute={$INPUT_DIR}{$OUTPUT_DIR} \
+-- $INPUT_DIR/translation*.treex.gz
+
+#$T scenarios/cs_analysis_1_morphodita.scen \
+#scenarios/cs_ref_analysis_1_morphodita.scen \
+#scenarios/align_ref.scen \
+#scenarios/en_analysis_1_morphodita.scen \
+#scenarios/en_analysis_2.scen \
+#scenarios/run_mgiza.scen \
+#scenarios/cs_analysis_2.scen \
+#Write::Treex substitute={$INPUT_DIR}{$OUTPUT_DIR} \
+#-- $INPUT_DIR/translation*.treex.gz

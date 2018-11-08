@@ -1,0 +1,8 @@
+1.(optional) Split data - scripts/split_data.sh
+2. Transform to Treex format 
+	- make init
+	- make totreex
+3. Prepare for feature extraction - scrips/collect_edits_prepare.sh
+4. Extract features - scrips/collect_edits.sh
+5. Collect features in one file and apply filter (filter_edits.R)
+6. Train the model - 

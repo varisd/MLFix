@@ -1,0 +1,26 @@
+_T=20160403_18:39:28_6283	 python
+_T=20160403_18:40:10_6283	 vim train_batch.sh
+_T=20160403_18:49:54_26145	 python
+_T=20160404_11:13:35_26145	 python
+_T=20160407_17:20:10_3726	 import model
+_T=20160407_17:20:21_3726	 import gzip
+_T=20160414_15:20:02_17885	 python
+_T=20160414_16:18:23_17885	 python
+_T=20160509_15:21:21_8232	 python
+_T=20160511_12:47:02_8232	 python
+_T=20160511_12:47:09_8232	 python
+_T=20160516_20:28:29_26086	 python
+_T=20160519_23:23:26_6515	 vim model.py
+_T=20160531_14:57:57_6515	 python
+_T=20160607_15:20:13_5991	 python
+_T=20160607_15:20:52_5991	 python
+_T=20160621_16:01:14_14525	 python
+_T=20160624_14:44:40_11031	 ls
+_T=20160711_19:36:39_2897	 python
+_T=20160711_19:36:39_2897	 python
+_T=20160711_19:37:35_2897	 python
+_T=20160718_18:04:01_2897	 python
+_T=20160721_19:39:28_8736	 python
+_T=20160721_19:39:28_8736	 python
+_T=20160721_19:45:07_8736	 python
+_T=20160721_19:47:29_8736	 scripts/scikit-cv-class.py --input_file=2016-06-22_15-02-59_0445012620_german_himltest_collect/all_edits2.tsv.gz --base_file=2016-06-22_15-02-59_0445012620_german_himltest_collect/base.wrong_form_3.tsv.gz --feat_selector= --target='wrong_form_3' --model_type=svm --model_params='probability=True,kernel=\"sigmoid\",gamma=0.0001,C=1000'

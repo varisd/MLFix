@@ -1,0 +1,4 @@
+Util::Eval language=cs selector=T zone='$zone->remove_tree("a") if $zone->has_tree("a");'
+Util::Eval language=cs selector=FIXLOG zone='$zone->set_sentence("");'
+A2A::CopyAtree source_language=cs language=cs selector=T align=1
+Align::AlignForward language=cs selector=T overwrite=0 preserve_type=0

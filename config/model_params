@@ -1,0 +1,15 @@
+knn "n_neighbors=3" knn_3
+knn "n_neighbors=5" knn_5
+knn "n_neighbors=7" knn_7
+knn "n_neighbors=10" knn_10
+extra_trees "max_depth=30,n_estimators=10" extra_trees_10
+extra_trees "n_estimators=25" extra_trees_25
+extra_trees "n_estimators=50" extra_trees_50
+extra_trees "n_estimators=75" extra_trees_75
+random_forest "max_depth=30,n_estimators=10" random_forest_10
+random_forest "n_estimators=25" random_forest_25
+random_forest "n_estimators=50" random_forest_50
+random_forest "n_estimators=75" random_forest_75
+log_regression "multi_class='ovr',C=1.0" log_regr
+ridge_classifier "alpha=1.0" ridge
+perceptron "" perceptron

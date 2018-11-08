@@ -1,0 +1,9 @@
+Util::SetGlobal language=en selector=
+Util::Eval zone='$zone->remove_tree("a") if $zone->has_tree("a");'
+W2A::EN::Tokenize
+W2A::EN::NormalizeForms
+W2A::EN::FixTokenization
+W2A::EN::TagMorphoDiTa
+W2A::EN::FixTags
+W2A::EN::Lemmatize
+A2A::ConvertTags input_driver="en::penn"
